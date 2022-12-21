@@ -16,6 +16,7 @@ import 'package:dokit/kit/apm/vm/vm_helper.dart';
 import 'package:dokit/kit/biz/biz.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'page2.dart';
@@ -26,7 +27,7 @@ void main() {
     'plugins.flutter.io/sensors/user_accel',
     'plugins.flutter.io/sensors/accelerometer'
   ];
-
+  WidgetsFlutterBinding.ensureInitialized();
   DoKit.runApp(
       app: DoKitApp(MyApp()),
       useInRelease: true,

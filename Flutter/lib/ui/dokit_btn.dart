@@ -43,6 +43,12 @@ class DoKitBtnState extends State<DoKitBtn> {
   bool showDebugPage = false;
 
   @override
+  void initState() {
+    super.initState();
+    DoKitBtnHelper.get().kitBtnState = this;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Positioned(
         left: offsetA?.dx,
@@ -122,5 +128,36 @@ class DoKitBtnState extends State<DoKitBtn> {
       debugPage!.remove();
       showDebugPage = false;
     }
+  }
+}
+
+class DoKitBtnHelper {
+  /// 私有内部构造方法，避免外部初始化
+  DoKitBtnHelper._internal();
+
+  /// 单例对象
+  static late final DoKitBtnHelper _instance = DoKitBtnHelper._internal();
+
+  /// 暴露给外部获取单例对象
+  factory DoKitBtnHelper.get() => _instance;
+
+  /// 默认构造函数，调用单例
+  factory DoKitBtnHelper() => DoKitBtnHelper.get();
+
+  DoKitBtnState? _kitBtnState;
+
+  /// 设置 _kitBtnState 引用
+  set kitBtnState(DoKitBtnState value) {
+    _kitBtnState = value;
+  }
+
+  /// 显示调试面板
+  void showDebugPage() {
+    _kitBtnState?.openDebugPage();
+  }
+
+  /// 关闭调试面板
+  void hideDebugPage() {
+    _kitBtnState?.closeDebugPage();
   }
 }

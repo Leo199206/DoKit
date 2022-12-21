@@ -1,6 +1,7 @@
 // ignore_for_file: unnecessary_null_comparison
 
 import 'dart:collection';
+import 'package:dokit/ui/dokit_btn.dart';
 import 'package:dokit/ui/resident_page.dart';
 import 'package:flutter/material.dart';
 
@@ -158,6 +159,16 @@ class BizKitManager {
       _kitGroupMap[group]!.add(kit);
     }
   }
+
+  /// 显示Debug面板
+  void show() {
+    DoKitBtnHelper.get().showDebugPage();
+  }
+
+  /// 隐藏Debug面板
+  void hide() {
+    DoKitBtnHelper.get().hideDebugPage();
+  }
 }
 
 class BizKit extends IKit {
@@ -177,10 +188,15 @@ class BizKit extends IKit {
       : assert(_name != null);
 
   String get name => _name;
+
   String get key => _key ?? _defaultKey;
+
   String get group => _group;
+
   String? get desc => _desc ?? '';
+
   String? get icon => _icon ?? getIcon();
+
   Function? action() => _action;
 
   String get _defaultKey =>

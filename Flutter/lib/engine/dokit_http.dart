@@ -189,6 +189,14 @@ class DoKitHttpClient implements HttpClient {
   Future<HttpClientRequest> putUrl(Uri url) {
     return monitor(origin.postUrl(url));
   }
+
+  @override
+  set connectionFactory(Future<ConnectionTask<Socket>> Function(Uri url, String? proxyHost, int? proxyPort)? f) {
+  }
+
+  @override
+  set keyLog(Function(String line)? callback) {
+  }
 }
 
 class DoKitHttpClientRequest implements HttpClientRequest {
