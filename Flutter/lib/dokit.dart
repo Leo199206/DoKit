@@ -11,7 +11,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:core';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:dokit/engine/dokit_binding.dart';
 import 'package:dokit/kit/apm/crash_kit.dart';
