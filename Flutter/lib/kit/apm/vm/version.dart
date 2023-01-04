@@ -26,16 +26,22 @@ class FlutterVersion extends SemanticVersion {
 
   factory FlutterVersion.parse(Map<String, dynamic>? json) {
     if (json == null) {
-      json={};
+      json = {};
     }
     return FlutterVersion._(
-      version: json['frameworkVersion'] as String,
-      channel: json['channel'] as String,
+      version:
+          json['frameworkVersion'] ? (json['frameworkVersion'] as String) : "0",
+      channel: (json['channel']) ? (json['channel'] as String) : "flutter",
       repositoryUrl: json['repositoryUrl'] as String? ?? 'unknown source',
-      frameworkRevision: json['frameworkRevisionShort'] as String,
+      frameworkRevision: json['frameworkRevisionShort']
+          ? (json['frameworkRevisionShort'] as String)
+          : "0",
       frameworkCommitDate: json['frameworkCommitDate'] as String,
-      engineRevision: json['engineRevisionShort'] as String,
-      dartSdkVersion: json['dartSdkVersion'] as String,
+      engineRevision: json['engineRevisionShort']
+          ? (json['engineRevisionShort'] as String)
+          : "0",
+      dartSdkVersion:
+          json['dartSdkVersion'] ? (json['dartSdkVersion'] as String) : "0",
     );
   }
 
