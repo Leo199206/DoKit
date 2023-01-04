@@ -119,7 +119,9 @@ class DoKit {
   static final i = _DoKitInterfaces._instance;
 }
 
-abstract class IDoKit {/* Just empty. */}
+abstract class IDoKit {
+  /* Just empty. */
+}
 
 class _DoKitInterfaces extends IDoKit with _BizKitMixin, _LeaksDoctorMixin {
   _DoKitInterfaces._();
@@ -284,72 +286,72 @@ void dispose({required BuildContext context}) {
 }
 
 void upLoadUserInfo() async {
-  final client = HttpClient();
-  const url = 'https://doraemon.xiaojukeji.com/uploadAppData';
-  final request = await client.postUrl(Uri.parse(url));
-  final packageInfo = await PackageInfo.fromPlatform();
-
-  Locale? locale;
-  void finder(Element element) {
-    if (element.widget is Localizations) {
-      locale ??= (element.widget as Localizations).locale;
-    } else {
-      element.visitChildren(finder);
-    }
-  }
-
-  DoKitApp.appKey.currentContext?.visitChildElements(finder);
-
-  final appId = packageInfo.packageName;
-  // 在iOS上可能获取不到appName
-  // https://github.com/flutter/flutter/issues/42510
-  // 当info.plist文件中只有CFBundleName，没有CFBundleDisplayName时，则无法获取
-  final appName =
-      packageInfo.appName.isEmpty ? 'DoKitFlutterDefault' : packageInfo.appName;
-  final appVersion = packageInfo.version;
-  final version = DK_PACKAGE_VERSION;
-  final from = '1';
-  var type = 'flutter_';
-  if (Platform.isIOS) {
-    type += 'iOS';
-  } else if (Platform.isAndroid) {
-    type += 'android';
-  } else {
-    type += 'other';
-  }
-  final language = locale?.toString() ?? '';
-  final playload = <String, dynamic>{};
-  await VMServiceWrapper.instance
-      .callExtensionService('flutterVersion')
-      .then((value) {
-    if (value != null) {
-      final flutter = FlutterVersion.parse(value.json);
-      playload['flutter_version'] = flutter.version;
-      playload['dart_sdk_version'] = flutter.dartSdkVersion;
-      type +=
-          '-flutter_version_${flutter.version}-dart_sdk_version_${flutter.dartSdkVersion}';
-    }
-  });
-
-  final params = <String, dynamic>{};
-  params['appId'] = appId;
-  params['appName'] = appName;
-  params['appVersion'] = appVersion;
-  params['version'] = version;
-  params['from'] = from;
-  params['type'] = type;
-  params['language'] = language;
-  params['playload'] = playload;
-
-  request.headers
-    ..add('Content-Type', 'application/json')
-    ..add('Accept', 'application/json');
-  request.add(utf8.encode(json.encode(params)));
-
-  final response = await request.close();
-//  final responseBody = await response.transform(utf8.decoder).join();
-  if (response.statusCode == HttpStatus.ok) {
-//    print('用户统计数据上报成功！');
-  }
-  client.close();
+//   final client = HttpClient();
+//   const url = 'https://doraemon.xiaojukeji.com/uploadAppData';
+//   final request = await client.postUrl(Uri.parse(url));
+//   final packageInfo = await PackageInfo.fromPlatform();
+//
+//   Locale? locale;
+//   void finder(Element element) {
+//     if (element.widget is Localizations) {
+//       locale ??= (element.widget as Localizations).locale;
+//     } else {
+//       element.visitChildren(finder);
+//     }
+//   }
+//
+//   DoKitApp.appKey.currentContext?.visitChildElements(finder);
+//
+//   final appId = packageInfo.packageName;
+//   // 在iOS上可能获取不到appName
+//   // https://github.com/flutter/flutter/issues/42510
+//   // 当info.plist文件中只有CFBundleName，没有CFBundleDisplayName时，则无法获取
+//   final appName =
+//       packageInfo.appName.isEmpty ? 'DoKitFlutterDefault' : packageInfo.appName;
+//   final appVersion = packageInfo.version;
+//   final version = DK_PACKAGE_VERSION;
+//   final from = '1';
+//   var type = 'flutter_';
+//   if (Platform.isIOS) {
+//     type += 'iOS';
+//   } else if (Platform.isAndroid) {
+//     type += 'android';
+//   } else {
+//     type += 'other';
+//   }
+//   final language = locale?.toString() ?? '';
+//   final playload = <String, dynamic>{};
+//   await VMServiceWrapper.instance
+//       .callExtensionService('flutterVersion')
+//       .then((value) {
+//     if (value != null && value.json != null) {
+//       final flutter = FlutterVersion.parse(value.json);
+//       playload['flutter_version'] = flutter.version;
+//       playload['dart_sdk_version'] = flutter.dartSdkVersion;
+//       type +=
+//           '-flutter_version_${flutter.version}-dart_sdk_version_${flutter.dartSdkVersion}';
+//     }
+//   });
+//
+//   final params = <String, dynamic>{};
+//   params['appId'] = appId;
+//   params['appName'] = appName;
+//   params['appVersion'] = appVersion;
+//   params['version'] = version;
+//   params['from'] = from;
+//   params['type'] = type;
+//   params['language'] = language;
+//   params['playload'] = playload;
+//
+//   request.headers
+//     ..add('Content-Type', 'application/json')
+//     ..add('Accept', 'application/json');
+//   request.add(utf8.encode(json.encode(params)));
+//
+//   final response = await request.close();
+// //  final responseBody = await response.transform(utf8.decoder).join();
+//   if (response.statusCode == HttpStatus.ok) {
+// //    print('用户统计数据上报成功！');
+//   }
+//   client.close();
 }

@@ -60,7 +60,7 @@ class VmHelper {
     VMServiceWrapper.instance
         .callExtensionService('flutterVersion')
         .then((value) => {
-              if (value != null)
+              if (value != null&&value.json!=null)
                 {_flutterVersion = FlutterVersion.parse(value.json).version}
             });
   }
