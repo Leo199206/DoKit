@@ -4,8 +4,8 @@ version: 0.8.0
 homepage: http://flutter.intra.xiaojukeji.com/index.php
 
 environment:
-  sdk: '>=2.18.4 <3.0.0'
-  flutter: ">=2.5.0"
+  sdk: ">=3.1.2 <4.0.0"
+  flutter: "3.13.4"
 
 dependencies:
   build_runner: ^2.2.0
