@@ -23,6 +23,7 @@ abstract class _Task<T> {
   }
 
   Future<T?> run();
+
   void done(T? result);
 }
 
@@ -34,10 +35,8 @@ class LeaksDoctorTask extends _Task {
   final StreamSink<LeaksDoctorEvent>? sink;
   final String? group;
 
-  LeaksDoctorTask(this.expando,this.group,
-      {required this.onCompleted,
-      required this.onLeaked,
-      this.sink});
+  LeaksDoctorTask(this.expando, this.group,
+      {required this.onCompleted, required this.onLeaked, this.sink});
 
   @override
   void done(Object? result) {
@@ -49,9 +48,9 @@ class LeaksDoctorTask extends _Task {
     if (expando != null) {
       if (await _maybeLeaked()) {
         // 强制GC，确保对象Release
-        sink?.add(LeaksDoctorEvent(LeaksDoctorEventType.GcStart,data: group));
+        sink?.add(LeaksDoctorEvent(LeaksDoctorEventType.GcStart, data: group));
         await VmserviceToolset().forceGC(); //GC
-        sink?.add(LeaksDoctorEvent(LeaksDoctorEventType.GcEnd,data: group));
+        sink?.add(LeaksDoctorEvent(LeaksDoctorEventType.GcEnd, data: group));
         return _afterGC();
       }
     }
@@ -67,24 +66,26 @@ class LeaksDoctorTask extends _Task {
         final leakedInstance = await _getWeakPropertyKey(weakProperty.id);
         if (leakedInstance != null) {
           final start = DateTime.now();
-          sink?.add(LeaksDoctorEvent(LeaksDoctorEventType.AnalyzeStart,data: '$group : ${DateTime.now()}'));
+          sink?.add(LeaksDoctorEvent(LeaksDoctorEventType.AnalyzeStart,
+              data: '$group : ${DateTime.now()}'));
 
-          LeaksMsgInfo? leaksMsgInfo = await compute(analyzeLeaks,leakedInstance); 
+          LeaksMsgInfo? leaksMsgInfo =
+              await compute(analyzeLeaks, leakedInstance);
 
           sink?.add(LeaksDoctorEvent(LeaksDoctorEventType.AnalyzeEnd,
-              data: '$group : ${DateTime.now()} diff = ${DateTime.now().difference(start)}'));
+              data:
+                  '$group : ${DateTime.now()} diff = ${DateTime.now().difference(start)}'));
 
           onLeaked?.call(leaksMsgInfo);
         }
       }
     }
-    sink?.add(LeaksDoctorEvent(LeaksDoctorEventType.AllEnd,data: group));
+    sink?.add(LeaksDoctorEvent(LeaksDoctorEventType.AllEnd, data: group));
   }
 
   // 可能有泄漏
   Future<bool> _maybeLeaked() async {
-    List<dynamic> weakPropertyList =
-        await _getWeakPropertys(expando!);
+    List<dynamic> weakPropertyList = await _getWeakPropertys(expando!);
     for (var weakProperty in weakPropertyList) {
       if (weakProperty != null) {
         final leakedInstance = await _getWeakPropertyKey(weakProperty.id);
@@ -123,7 +124,7 @@ class LeaksDoctorTask extends _Task {
     if (weakPropertyObj != null) {
       final weakPropertyInstance = Instance.parse(weakPropertyObj.json);
 
-      return weakPropertyInstance?.propertyKey;
+      return weakPropertyInstance;
     }
     return null;
   }
@@ -131,7 +132,8 @@ class LeaksDoctorTask extends _Task {
   static Future<LeaksMsgInfo?> analyzeLeaks(InstanceRef? leakedInstance) async {
     if (leakedInstance?.id != null) {
       RetainingPath? retainingPath = await _getRetainPath(leakedInstance!);
-      if (retainingPath != null && retainingPath.elements != null &&
+      if (retainingPath != null &&
+          retainingPath.elements != null &&
           retainingPath.elements!.isNotEmpty) {
         final retainObjList = retainingPath.elements!;
 
@@ -163,20 +165,23 @@ class LeaksDoctorTask extends _Task {
         }
 
         return LeaksMsgInfo(retainingPathList, retainingPath.gcRootType!,
-            leaksInstanceCounts: leaksInstanceCounts, leaksClsName: clzName, expectedTotalCount: expectedTotalCount);
+            leaksInstanceCounts: leaksInstanceCounts,
+            leaksClsName: clzName,
+            expectedTotalCount: expectedTotalCount);
       }
     }
     return null;
   }
 
-   static Future<RetainingPath?> _getRetainPath(InstanceRef ref) async {
+  static Future<RetainingPath?> _getRetainPath(InstanceRef ref) async {
     try {
       final maxRetainingPathLimit = LeaksDoctorConf().maxRetainingPathLimit!;
       return await VmserviceToolset()
           .getRetainingPath(ref.id!, maxRetainingPathLimit);
     } on SentinelException catch (e) {
       // 有可能已经被回收了 ~
-      if (e.sentinel.kind == SentinelKind.kCollected || e.sentinel.kind == SentinelKind.kExpired) {
+      if (e.sentinel.kind == SentinelKind.kCollected ||
+          e.sentinel.kind == SentinelKind.kExpired) {
         return null;
       }
       // 其它错误
@@ -214,13 +219,12 @@ class LeaksDoctorTask extends _Task {
     // 引用路径节点的父节点 field
     final String parentField = ele.parentField ?? '';
     // print('+ $name   $parentField');
-}
+  }
 
   static Future<LeaksMsgNode?> _buildAnalyzeNode(
       RetainingObject retainingObject) async {
+    _analyzeRetainingObject(retainingObject);
 
-    _analyzeRetainingObject(retainingObject); 
-      
     if (retainingObject.value is InstanceRef) {
       InstanceRef instanceRef = retainingObject.value as InstanceRef;
       final String name = instanceRef.classRef?.name ?? '';
